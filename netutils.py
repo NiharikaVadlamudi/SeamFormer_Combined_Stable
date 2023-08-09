@@ -15,6 +15,8 @@ global mean , std
 mean = [0.485, 0.456, 0.406]
 std = [0.229, 0.224, 0.225]
     
+# @WASEEM'S PNSR FOR FULL SCALE IMAGE WILL BE ADDED HERE 
+
 
 
 def merge_images_horizontally(img1, img2, img3):

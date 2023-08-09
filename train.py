@@ -108,7 +108,8 @@ def validateNetwork(epoch,network,settings,validloader,vis=True):
                 # Forward Pass - strain 
                 if settings['btrain']:
                     loss,gt__patches,pred_pixel_values= network(inputs,gt_bin_img=outputs,gt_scr_img=None,criterion=loss_criterion,strain=False,btrain=True,mode='train')
-            
+                    # WASEEM'S PSNR FUNCTION WILL BE CALLED HERE 
+                    # psnr = computePSNR() # 
                 rec_images = rearrange(pred_pixel_values, 'b (h w) (p1 p2 c) -> b c (h p1) (w p2)',p1 = patch_size, p2 = patch_size, h=image_size//patch_size)
                 
                 # Visualisation 
@@ -119,8 +120,14 @@ def validateNetwork(epoch,network,settings,validloader,vis=True):
         except Exception as e :
             print('ValidationNetwork Error : {}'.format(str(e)))
             continue
+
     validationLoss = losses / len(validloader)
-    return validationLoss
+    # Compute net psnr here @WASEEM 
+
+    if settings['strain']:
+        return validationLoss
+    if settings['btrain']:
+        return validationLoss #,netPSNR  @ WASEEM 
 
 # Train ( Binary / Scribble ) with minimum of 100 samples .
 def trainNetwork(settings,min_samples=100):

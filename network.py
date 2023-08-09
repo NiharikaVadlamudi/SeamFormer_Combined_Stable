@@ -80,7 +80,7 @@ class SeamFormer(nn.Module):
                 pt = torch.exp(-binaryloss) 
                 binaryloss = ((1-pt)**2) * binaryloss 
                 binaryloss = torch.mean(binaryloss)
-            return binaryloss,gt_bin_patches,pred_pixel_values_bin
+                return binaryloss,gt_bin_patches,pred_pixel_values_bin
         
         if strain:
             decoder_tokens_scr = self.enc_to_dec_scr(encoded_tokens)
@@ -98,9 +98,8 @@ class SeamFormer(nn.Module):
                 pt = torch.exp(-scribbleloss) 
                 scribbleloss = ((1-pt)**2) *scribbleloss
                 scribbleloss = torch.mean(scribbleloss)
-
-            return scribbleloss,gt_scr_patches,pred_pixel_values_scr
+                return scribbleloss,gt_scr_patches,pred_pixel_values_scr
             
         # Sending out only the pixel values for patching.
-        if mode=='test' or mode=='val':
+        if mode=='test':
             return pred_pixel_values_bin,pred_pixel_values_scr
