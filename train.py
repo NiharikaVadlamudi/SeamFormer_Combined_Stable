@@ -19,7 +19,7 @@ from dataloader import *
 import utils as utils
 from network import SeamFormer
 from configuration import config as settings    
-from netutils import imvisualize
+from netutils import imvisualize, computePSNR
 
 # Global Settings 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -91,6 +91,9 @@ def validateNetwork(epoch,network,settings,validloader,vis=True):
     image_size = np.int32(settings['imgsize'])
     losses = 0
     network.eval()
+    if settings['btrain']:
+        psnr = 0
+        n = 0
     for bindex, (valid_index, valid_in, valid_out) in enumerate(validloader):
         try:
             inputs = valid_in.to(device)
@@ -107,9 +110,9 @@ def validateNetwork(epoch,network,settings,validloader,vis=True):
                     loss,gt_patches,pred_pixel_values = network(inputs,gt_bin_img=None,gt_scr_img=outputs,criterion=loss_criterion,strain=True,btrain=False,mode='train')
                 # Forward Pass - strain 
                 if settings['btrain']:
-                    loss,gt__patches,pred_pixel_values= network(inputs,gt_bin_img=outputs,gt_scr_img=None,criterion=loss_criterion,strain=False,btrain=True,mode='train')
-                    # WASEEM'S PSNR FUNCTION WILL BE CALLED HERE 
-                    # psnr = computePSNR() # 
+                    loss,gt_patches,pred_pixel_values= network(inputs,gt_bin_img=outputs,gt_scr_img=None,criterion=loss_criterion,strain=False,btrain=True,mode='train')
+                    psnr += computePSNR(gt_patches, rec_images, PIXEL_MAX=1.0) 
+                    n += 1
                 rec_images = rearrange(pred_pixel_values, 'b (h w) (p1 p2 c) -> b c (h p1) (w p2)',p1 = patch_size, p2 = patch_size, h=image_size//patch_size)
                 
                 # Visualisation 
@@ -122,12 +125,12 @@ def validateNetwork(epoch,network,settings,validloader,vis=True):
             continue
 
     validationLoss = losses / len(validloader)
-    # Compute net psnr here @WASEEM 
 
     if settings['strain']:
         return validationLoss
     if settings['btrain']:
-        return validationLoss #,netPSNR  @ WASEEM 
+        netPSNR = psnr/n
+        return validationLoss, netPSNR  
 
 # Train ( Binary / Scribble ) with minimum of 100 samples .
 def trainNetwork(settings,min_samples=100):

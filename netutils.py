@@ -141,4 +141,33 @@ def reconstruct(pred_pixel_values,patch_size,target_shape,image_size):
 
 
 
+'''
+Calculate patch/image wise PSNR given two input 
+'''
+def computePSNR(gt_img, pred_img, PIXEL_MAX=None):
+    # Detach from computation graph, move calculations to CPU
+    pred_img = pred_img.detach().cpu()
+    gt_img = gt_img.detach().cpu()
 
+    # Convert torch tensor to number arrays
+    pred_img = pred_img.numpy()[0]
+    gt_img = gt_img.numpy()[0]
+
+    # calculate Pixel Max and normalise it
+    if not PIXEL_MAX:
+        PIXEL_MAX = np.max(gt_img)
+    gt_img = gt_img/PIXEL_MAX
+
+    # Convert prediction values to 0 and 1
+    pred_img[np.where(pred_img>1)] = 1
+    pred_img[np.where(pred_img<0)] = 0
+    pred_img = (pred_img>0.5)*1
+
+    # Calculate MSE
+    mse = np.mean( (pred_img - gt_img) ** 2 )
+    if (mse == 0):
+        return (100)
+
+    # Calculate PSNR
+    p = (20 * math.log10(PIXEL_MAX / math.sqrt(mse)))
+    return p    
