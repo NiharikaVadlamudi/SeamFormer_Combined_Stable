@@ -18,12 +18,10 @@ from PIL import Image
 import albumentations as A
 import random
 
-# File Imports (BKS.json)
-from configuration import config
-
 
 class ScribbleDataset(D.Dataset):
-    def __init__(self,base_dir,file_label,set,augmentation=True,flipped=False):
+    def __init__(self,config,base_dir,file_label,set,augmentation=True,flipped=False):
+        self.config = config
         self.base_dir = base_dir
         # File where all the images paths are stored.
         self.file_label = file_label
@@ -71,12 +69,12 @@ class ScribbleDataset(D.Dataset):
 
     def readImages(self,file_name):
         # Refer documentation for more details of how dataset folder should be structured.
-        if config['strain']:
-            imageURL = self.base_dir+'{}_{}'.format(config['dataset_code'],self.set)+'/images/'+file_name
-            gtURL = self.base_dir+'{}_{}'.format(config['dataset_code'],self.set)+'/scribbleMap/'+file_name.replace('im_','sm_')
-        if config['btrain']:
-            imageURL = self.base_dir+'{}_{}'.format(config['dataset_code'],self.set)+'/images/'+file_name
-            gtURL = self.base_dir+'{}_{}'.format(config['dataset_code'],self.set)+'/binaryImages/'+file_name.replace('im_','bm_')
+        if self.config['train_scribble']:
+            imageURL = self.base_dir+'{}_{}'.format(self.config['dataset_code'],self.set)+'/images/'+file_name
+            gtURL = self.base_dir+'{}_{}'.format(self.config['dataset_code'],self.set)+'/scribbleMap/'+file_name.replace('im_','sm_')
+        if self.config['train_binary']:
+            imageURL = self.base_dir+'{}_{}'.format(self.config['dataset_code'],self.set)+'/images/'+file_name
+            gtURL = self.base_dir+'{}_{}'.format(self.config['dataset_code'],self.set)+'/binaryImages/'+file_name.replace('im_','bm_')
         
         if not (os.path.exists(imageURL) or not(os.path.exists(gtURL))):
             print("Image {} DOES NOT exists at the specified location.".format(imageURL))
@@ -85,7 +83,7 @@ class ScribbleDataset(D.Dataset):
         deg_img = cv2.imread(imageURL)
         gt_img = cv2.imread(gtURL)
 
-        if config['btrain']:
+        if self.config['train_binary']:
             gt_img = 255 - cv2.imread(gtURL)
 
         H,W,C = deg_img.shape
@@ -125,7 +123,7 @@ class ScribbleDataset(D.Dataset):
 Load Entire Dataset 
 '''
 
-def loadDatasets(base_dir,flipped=False):
+def loadDatasets(config,base_dir,flipped=False):
     # Load from the location
     data_tr = list(os.listdir(base_dir+'{}_train/images/'.format(config['dataset_code'])))
     data_va = list(os.listdir(base_dir+'{}_test/images/'.format(config['dataset_code'])))
@@ -138,8 +136,8 @@ def loadDatasets(base_dir,flipped=False):
 
     # Dataset ( Train - Test ) 
     # Note : You can assume your entire validation set will be labelled as 'test'
-    data_train = ScribbleDataset(base_dir, data_tr, 'train', augmentation=True)
-    data_valid = ScribbleDataset(base_dir, data_va, 'test', augmentation=False, flipped = flipped)
+    data_train = ScribbleDataset(config,base_dir, data_tr, 'train', augmentation=True)
+    data_valid = ScribbleDataset(config,base_dir, data_va, 'test', augmentation=False, flipped = flipped)
     return data_train, data_valid
 
 
@@ -186,9 +184,9 @@ Returns:
     test_loader (dataloader): test data loader
 """
 
-def all_data_loader(batch_size=4):
+def all_data_loader(config,batch_size=4):
     base_dir =config["data_path"]
-    data_train, data_valid = loadDatasets(base_dir)
+    data_train, data_valid = loadDatasets(config,base_dir)
     train_loader = torch.utils.data.DataLoader(data_train, collate_fn=sort_batch, batch_size=batch_size, shuffle=False, num_workers=0, pin_memory=True)
     valid_loader = torch.utils.data.DataLoader(data_valid, collate_fn=sort_batch, batch_size=1, shuffle=False, num_workers=0, pin_memory=True)
     return train_loader, valid_loader 

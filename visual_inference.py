@@ -20,7 +20,6 @@ import argparse
 # Global settings
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-
 # File Imports 
 from netutils import *
 from network import * 

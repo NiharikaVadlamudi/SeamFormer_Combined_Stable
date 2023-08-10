@@ -156,7 +156,7 @@ def trainNetwork(settings,min_samples=100):
     os.makedirs(settings['model_weights_path'],exist_ok=True)
     
     #Get dataloaders
-    trainloader, validloader = all_data_loader(settings['batch_size'])
+    trainloader, validloader = all_data_loader(settings,settings['batch_size'])
     print('TrainLoader Samples : {} TestLoader samples : {}'.format(len(trainloader),len(validloader)))
 
     try: 
