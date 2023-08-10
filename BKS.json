@@ -18,11 +18,10 @@
     "encoder_dims":768,
     "batch_size":4,
     "num_epochs":30,
+    "mode":"train",
     "train_scribble":true,
     "train_binary":false,
     "vis_results":"True",
     "pretrained_weights_path":"/home2/thejasvi/SeamFormer_PrivateCorrect/BKS_correct_final.pt",
-    "WANDB_API_KEY":"4169d431880a3dd9883605d90d1fe23a248ea0c5",
-    "WANDB_ENTITY":"amber1121",
-    "WANDB_RESUME": "True"
+    "enabledWandb":false
 }

@@ -9,16 +9,17 @@ import os
 import copy
 import torch
 import wandb
+import json 
 import numpy as np
 from vit_pytorch import ViT
 import torch.optim as optim
 from einops import rearrange
+import argparse
 
 # File Imports 
 from dataloader import *
 import utils as utils
-from network import SeamFormer
-from configuration import config as settings    
+from network import SeamFormer 
 from netutils import imvisualize, computePSNR
 
 # Global Settings 
@@ -102,9 +103,7 @@ def validateNetwork(epoch,network,settings,validloader,vis=True):
     image_size = np.int32(settings['imgsize'])
     losses = 0
     network.eval()
-    if settings['btrain']:
-        psnr = 0
-        n = 0
+    psnr=0
     for bindex, (valid_index, valid_in, valid_out) in enumerate(validloader):
         try:
             inputs = valid_in.to(device)
@@ -117,15 +116,15 @@ def validateNetwork(epoch,network,settings,validloader,vis=True):
                 weight = torch.tensor(n_black/n_white)
                 loss_criterion = torch.nn.BCEWithLogitsLoss(pos_weight=weight, reduction='none')
                 # Forward Pass 
-                if settings['strain']:
+                if settings['train_scribble']:
                     loss,gt_patches,pred_pixel_values = network(inputs,gt_bin_img=None,gt_scr_img=outputs,criterion=loss_criterion,strain=True,btrain=False,mode='train')
                 # Forward Pass - strain 
-                if settings['btrain']:
+                if settings['train_binary']:
                     loss,gt_patches,pred_pixel_values= network(inputs,gt_bin_img=outputs,gt_scr_img=None,criterion=loss_criterion,strain=False,btrain=True,mode='train')
                     psnr += computePSNR(gt_patches, rec_images, PIXEL_MAX=1.0) 
-                    n += 1
+
+                # Reconstruct 
                 rec_images = rearrange(pred_pixel_values, 'b (h w) (p1 p2 c) -> b c (h p1) (w p2)',p1 = patch_size, p2 = patch_size, h=image_size//patch_size)
-                
                 # Visualisation 
                 if bindex%1000==0 and vis is True:
                     imvisualize(settings,inputs.cpu(), outputs.cpu(),rec_images.cpu(),bindex,epoch)
@@ -137,10 +136,10 @@ def validateNetwork(epoch,network,settings,validloader,vis=True):
 
     validationLoss = losses / len(validloader)
 
-    if settings['strain']:
+    if settings['train_scribble']:
         return validationLoss
-    if settings['btrain']:
-        netPSNR = psnr/n
+    if settings['train_binary']:
+        netPSNR = psnr/len(validloader)
         return validationLoss, netPSNR  
 
 # Train ( Binary / Scribble ) with minimum of 100 samples .
@@ -202,11 +201,11 @@ def trainNetwork(settings,min_samples=100):
                 loss_criterion = torch.nn.BCEWithLogitsLoss(pos_weight=weight, reduction='none')
 
                 # Forward Pass - btrain 
-                if settings['strain']:
-                    loss,_,_ = network(inputs,gt_bin_img=None,gt_scr_img=outputs,criterion=loss_criterion,strain=True,btrain=False,mode='train')
+                if settings['train_scribble']:
+                    loss,_,_ = network(inputs,gt_bin_img=None,gt_scr_img=outputs,criterion=loss_criterion,strain=settings['train_scribble'],btrain=settings['train_binary'],mode=settings['mode'])
                 # Forward Pass - strain 
-                if settings['btrain']:
-                    loss,_,_ = network(inputs,gt_bin_img=outputs,gt_scr_img=None,criterion=loss_criterion,strain=False,btrain=True,mode='train')
+                if settings['train_binary']:
+                    loss,_,_ = network(inputs,gt_bin_img=outputs,gt_scr_img=None,criterion=loss_criterion,strain=settings['train_scribble'],btrain=settings['train_binary'],mode=settings['mode'])
                 
                 # backward pass
                 loss.backward()
@@ -247,6 +246,48 @@ def trainNetwork(settings,min_samples=100):
 
     
 if __name__ == "__main__":
-    print ("Training Operation Invoked...")
+    parser = argparse.ArgumentParser(description="Config Choice")
+    parser.add_argument("--exp_json_path", type=str,default=None)
+    # Overriding parameters
+    parser.add_argument("--mode", type=str,default=None,help='train/test')
+    parser.add_argument("--train_scribble", action="store_true", help="Enables Scribble Training")
+    parser.add_argument("--train_scribble", action="store_true", help="Enables Binary Training")
+    
+    # If WANDB Enabled 
+    parser.add_argument("--wandb", action="store_true", help="Enables Automatic WandB Logging")
+
+
+    args = parser.parse_args()  
+    try:
+        with open(args.exp_json_path,'r') as f:
+            configs = json.load(f)
+        settings = copy.deepcopy(configs)
+    except FileNotFoundError:
+        print('Experiment JSON File does not exist.')
+        sys.exit() 
+    
+    # Override btrain,strain flag and make is required paramter.
+    if args.train_scribble:
+        settings['train_scribble']=True
+        settings['train_binary']=False
+    if args.train_binary:
+        settings['train_binary']=True
+        settings['train_scribble']=False
+    if args.mode is not None:
+        settings['mode']=args.mode 
+    if args.wandb:
+        settings['enabledWandb']=True
+
+    if settings['enabledWandb']:
+        print('------------- Logging into wandb -------------')
+        wandb.init(project="SeamFormer_ICDAR2023",id=configs['wid'],resume='allow',config=configs)
+        
+
+    os.makedirs(configs['model_weights_path'],exist_ok=True)
+    os.makedirs(configs['visualisation_folder'],exist_ok=True)
+
+    print ("-------------Training -----------------")
     trainNetwork(settings)
     print('Training Completed ~')
+    
+
