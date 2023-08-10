@@ -13,6 +13,7 @@ import numpy as np
 from empatches import EMPatches
 from einops import rearrange
 
+
 global mean , std 
 
 mean = [0.485, 0.456, 0.406]
@@ -170,3 +171,81 @@ def computePSNR(gt_img, pred_img, PIXEL_MAX=None):
     # Calculate PSNR
     p = (20 * math.log10(PIXEL_MAX / math.sqrt(mse)))
     return p    
+
+
+
+
+def polygon_to_distance_mask(pmask,threshold=60):
+    # Read the polygon mask image as a binary image
+    polygon_mask = cv2.cvtColor(pmask,cv2.COLOR_BGR2GRAY)
+
+    # Ensure that the mask is binary (0 or 255 values)
+    _, polygon_mask = cv2.threshold(polygon_mask, 128, 255, cv2.THRESH_BINARY)
+
+    # Compute the distance transform
+    distance_mask = cv2.distanceTransform(polygon_mask, cv2.DIST_L2, cv2.DIST_MASK_5)
+
+    # Normalize the distance values to 0-255 range
+    distance_mask = cv2.normalize(distance_mask, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+
+    # Threshold the image
+    src = copy.deepcopy(distance_mask)
+    src[src<threshold]=0
+    src[src>=threshold]=255
+    src = np.uint8(src)
+    return src
+
+def average_coordinates(hull):
+    # Calculate the average x and y coordinates of all points in the hull/contour.
+    # Format : [[x1,y1], [x2,y2],[x3,y3]...[xn,yn]]
+    num_points = len(hull)
+    avg_x = sum(pt[0][0] for pt in hull) / num_points
+    avg_y = sum(pt[0][1] for pt in hull) / num_points
+    return avg_x, avg_y
+
+
+# You send set of clean contours to this function
+# you obtain a list of hulls and merge the ones on the same horizontal level.
+def combine_hulls_on_same_level(contours,tolerance=50):
+    combined_hulls = []
+    hulls = [cv2.convexHull(np.array(contour)) for contour in contours]
+
+    # Sort the hulls by the average y-coordinate of all points
+    sorted_hulls = sorted(hulls, key=lambda hull: average_coordinates(hull)[1])
+
+    # Starting with 0th  contour 
+    current_combined_hull = sorted_hulls[0]
+    # Starts from 1st contour and keeps track of which hull is merging and breaks
+    for hull in sorted_hulls[1:]:
+        # Check if the current hull is on the same horizontal level as the combined hull
+        if abs(average_coordinates(hull)[1] - average_coordinates(current_combined_hull)[1]) < tolerance:
+            # Merge the hulls by extending the current_combined_hull with hull (combining points)
+            current_combined_hull = np.vstack((current_combined_hull, hull))
+        else:
+            # Hull is on a different level, add the current combined hull to the result
+            combined_hulls.append(current_combined_hull)
+            current_combined_hull = hull
+
+    # Add the last combined hull
+    combined_hulls.append(current_combined_hull)
+    # Returning them as hulls again
+    nethulls = [cv2.convexHull(np.array(contour),dtype=np.int32) for contour in combined_hulls]
+    finalHulls = [ hull.reshape((-1,2)).tolist() for hull in nethulls ]
+    return finalHulls
+
+
+# Text Dilation 
+def text_dilate(image, kernel_size, iterations=1):
+    # Create a structuring element (kernel) for dilation
+    kernel = np.ones((kernel_size, kernel_size), np.uint8)
+    # Perform dilation
+    dilated_image = cv2.dilate(image, kernel, iterations=iterations)
+    return dilated_image
+
+# Horizontal Dilation
+def horizontal_dilation(image, kernel_width=5,iterations=1):
+    # Create a horizontal kernel for dilation
+    kernel = np.ones((1, kernel_width), np.uint8)
+    # Perform dilation
+    dilated_image = cv2.dilate(image, kernel, iterations)
+    return dilated_image
