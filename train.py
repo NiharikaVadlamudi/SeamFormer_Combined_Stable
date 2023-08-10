@@ -66,9 +66,20 @@ def buildModel(settings):
                 param.requires_grad = False
 
     elif settings['train_scribble']:
-         for name, param in network.named_parameters():
+        for name, param in network.named_parameters():
             if param.requires_grad and not name.find("scr")>=0 :
-                param.requires_grad = False
+                param.requires_grad = False 
+
+        # Fill in scribble decoder branch with binary decoder branch weights.
+        binary_model_dict = {}
+        for k, v in network.state_dict().items():
+            if 'scr' in k:
+                binary_model_dict[k]=binary_model_dict[k.replace('scr','bin')].clone()
+            else:
+                binary_model_dict[k] = v
+        # Load this new dictionary for transferring weights 
+        network.load_state_dict(binary_model_dict,strict=True)
+        
     else:
         print('Neither scribble_train nor binary_train , Exiting !')
         sys.exit()
