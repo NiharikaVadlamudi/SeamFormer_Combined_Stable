@@ -111,63 +111,73 @@ To train the model dataset should be in a folder following the hierarchy:
   | Parameters  | Description | Default Value
   | ----------  | ----------- | ------------- |
   | dataset_code   | Short name for Dataset as in dataset folder   | I2 | 
-  | experiment_base   |   | Content | 
-  | wid   |    | Content | 
-  | data_path   | Dataset path   | /ICDAR2023/I2 | 
-  | model_weights_path   | Path location to store trained weights  | weights/ | 
-  | visualisation_folder   |   | Content | 
-  | learning_rate   | Initial learning rate of optimizer (scheduler applied) | Content | 
-  | vit_model_size   |    | Content | 
-  | img_size   | ViT input size    | Content | 
-  | patch_size   | ViT patch size   | Content | 
-  | encoder_freeze   | To freeze encoder for scribble generation   | Content | 
-  | encoder_layers   | Number of encoder layers in stage-1 multi-task transformer   | Content | 
-  | encoder_heads   | Number of heads in MHSA    | Content | 
-  | encoder_dims   | Dimension of token in encoder   | Content | 
-  | batch_size   | Batch size for training   | Content | 
-  | num_epochs   | Total epochs for training   | Content | 
-  | vis_results   |    | Content | 
-  | pretrained_weights_path   | Path location for pretrained weights(either for scribble/binarisation)   | Content | 
-  <!-- | WANDB_API_KEY   | Content   | Content | 
-  | WANDB_ENTITY   | Content   | Content | 
-  | WANDB_RESUME   | Content   | Content |  -->
+  | experiment_base   | Experiment Name  | SeamFormerV1 | 
+  | wid   | WandB experiment Name   | I2_train | 
+  | data_path   | Dataset path   | /ICDAR2023/ | 
+  | model_weights_path   | Path location to store trained weights  | /weights/ | 
+  | visualisation_folder   | Folder path to store visualisation results | /vis_results/ | 
+  | learning_rate   | Initial learning rate of optimizer (scheduler applied) | $0.0008$ | 
+  | weight_logging_interval  | Epoch interval to store weights, i.e 3 -> Store weight every 3 epoch    | $3$ | 
+  | img_size   | ViT input size    | $256 \times 256$| 
+  | patch_size   | ViT patch size   | $8 \times 8$ | 
+  | encoder_layers   | Number of encoder layers in stage-1 multi-task transformer   | $6$ | 
+  | encoder_heads   | Number of heads in MHSA    | $8$ | 
+  | encoder_dims   | Dimension of token in encoder   | $768$ | 
+  | batch_size   | Batch size for training   | $4$ | 
+  | num_epochs   | Total epochs for training   | $30$ | 
+  | mode   | Flag to train or test. Either use "train"/"test"   | "train" | 
+  | train_scribble   | When set to true, trains only scribble branch   | false| 
+  | train_binary  | When set to true, trains only binary branch   | true | 
+  | pretrained_weights_path   | Path location for pretrained weights(either for scribble/binarisation)   | /weights/ | 
+  | enableWandb  | Enable it if you have wandB configured, else the results are stored locally in  `visualisation_folder`  | false |
+
 
 
 ### Stage-1
 Stage 1 comprises of a multi-task tranformer for binarisation and scribble generation.
 
-- Details for Binarisation alone flag (train, inference)
-- Details for Scribble alone flag (train, inference)
-- Details for both (only inference)
 
-#### Patch Generation for Binarisation
+#### Sample train/test.json file structure
+```json
+[
+  {"imgPath": "./ICDAR2023/SD/SD_Train/imgs/palm_leaf_1.jpg",
+   "gdPolygons": [[[x1,y1],[x2,y2]],[[x3,y3],[x4,y4]]],
+   "scribbles": [[[x5,y5],[x6,y6]],[[x7,y7],[x8,y8]]]
+  } ,
+  ...
+]
 ```
 
+#### Data Preparation for Binarisation and Scribble Generation
+```bash
+python datapreparation.py \
+ --datafolder '/ICDAR2023/' \
+ --outputfolderPath '/ICDAR2023/SD_train' \
+ --inputjsonPath '/ICDAR2023/SD/SD_Train/train.json'
+
+python datapreparation.py \
+ --datafolder '/ICDAR2023/' \
+ --outputfolderPath '/ICDAR2023/SD_test' \
+ --inputjsonPath '/ICDAR2023/SD/SD_Test/test.json'
 ```
-#### Binarisation alone experiment from Scratch 
-- Based on flag load pretrain weights from DocEnTr
+#### Training Binarisation branch
+```bash
+python train.py --exp_json_path 'BKS.json' --mode 'train' --train_binary
 ```
+
+
+#### Training Scribble generation branch 
+```bash
+python train.py --exp_json_path 'BKS.json' --mode 'train' --train_scribble
 
 ```
 
----
-
-#### Patch Generation for Scribbles
-```
-
-```
-#### Scribble generation alone experiment from Scratch 
-- Based on flag load pretrain weights from Binarisation stage
-```
-
-```
-
-#### WandB Setup (Optional)
+<!-- #### WandB Setup (Optional)
 - Include in Config file. Make changes in train.py
 - Those who need wandb, make the visualization local - text file (metrics), folder(images) 
 ```
 
-```
+``` -->
 
 
 
