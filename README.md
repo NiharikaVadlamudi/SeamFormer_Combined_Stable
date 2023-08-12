@@ -31,14 +31,14 @@ pip install -r stage1_requirements.txt
 ---
 Overall Two-stage Architecture: Stage-1 generated binarised output with just text content along with a scribble map. Stage-2 uses these two intermediate outputs to generate Seams and finally the required text-line segmentation. 
 
-![Overall Architecture](imgs/overall.png)
+![Overall Architecture](readme_imgs/overall.png)
 
 <br>
 Stage - 1: Uses Encoder-Decoder based multi-task vision transformer to generate binarisation result in one branch and scribble(strike-through lines) in another branch.
 
 <center> 
 
-  ![stage 1](imgs/stage1.png)  
+  ![stage 1](readme_imgs/stage1.png)  
 </center>
 
 <br>
@@ -48,7 +48,7 @@ Stage - 2: Uses binarisation and scribble output from previous stage to create c
 
 <center>
 
-  ![stage 2](imgs/stage2.png)  
+  ![stage 2](readme_imgs/stage2.png)  
 </center>
 
 
@@ -76,25 +76,15 @@ Download Pretrained weights for binarisation from [ drive link of DocEnTr: An En
 <br>
 
 ### Preparing the Data
-To train the model dataset should be in a folder following the hierarchy:
+To train the model dataset should be in a folder following the hierarchy: 
 
 ```
-├── I2
-│   ├── I2_Train
+├── Dataset
+│   ├── <Dataset>_Train
 │   │   ├── imgs
 │   │   ├── bin_imgs
 │   │   ├── train.json
-│   ├── I2_Test
-│   │   ├── imgs
-│   │   ├── bin_imgs
-│   │   ├── test.json
-│
-├── Dataset_name
-│   ├── <Dataset_name>_Train
-│   │   ├── imgs
-│   │   ├── bin_imgs
-│   │   ├── train.json
-│   ├── <Dataset_name>_Test
+│   ├── <Dataset>_Test
 │   │   ├── imgs
 │   │   ├── bin_imgs
 │   │   ├── test.json
@@ -116,7 +106,7 @@ To train the model dataset should be in a folder following the hierarchy:
   | data_path   | Dataset path   | /ICDAR2023/I2 | 
   | model_weights_path   | Path location to store trained weights  | weights/ | 
   | visualisation_folder   |   | Content | 
-  | learning_rate   | Initial learning rate of optimizer (scheduler applied) | Content | 
+  | learning_rate   | Initial learning rate of optimizer (scheduler applied) | 0.005-0.0009 | 
   | vit_model_size   |    | Content | 
   | img_size   | ViT input size    | Content | 
   | patch_size   | ViT patch size   | Content | 
