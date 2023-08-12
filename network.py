@@ -75,7 +75,7 @@ class SeamFormer(nn.Module):
                 # calculate the loss with gt
                 if gt_bin_img is not None:
                     gt_bin_patches = self.to_patch(gt_bin_img)
-                ## ---  Weighted BCE Loss ---
+                ## ---  Focal Loss calculation ---
                 binaryloss = criterion(pred_pixel_values_bin,gt_bin_patches)
                 pt = torch.exp(-binaryloss) 
                 binaryloss = ((1-pt)**2) * binaryloss 
@@ -93,7 +93,7 @@ class SeamFormer(nn.Module):
                 # calculate the loss with gt
                 if gt_scr_img is not None:
                     gt_scr_patches = self.to_patch(gt_scr_img)
-                ## ---  Weighted BCE Loss ---
+                ## --- Focal Loss calculation ---
                 scribbleloss = criterion(pred_pixel_values_scr,gt_scr_patches)
                 pt = torch.exp(-scribbleloss) 
                 scribbleloss = ((1-pt)**2) *scribbleloss

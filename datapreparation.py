@@ -53,7 +53,7 @@ def createFolders(args):
     os.makedirs(args.outputfolderPath, exist_ok=True)
     smPath = os.path.join(args.outputfolderPath,'scribbleMap/')
     if args.binaryFlag:
-        bmPath = os.path.join(args.outputfolderPath,'binaryMap/')
+        bmPath = os.path.join(args.outputfolderPath,'binaryImages/')
     imPath = os.path.join(args.outputfolderPath,'images/')
     # Prepare a key point image folder 
     try : 
@@ -187,7 +187,7 @@ def datasetPrepare(args):
                     cv2.imwrite(os.path.join(args.outputfolderPath,'scribbleMap/sm_{}.jpg'.format(imageName_i)),spatch)
                     cv2.imwrite(os.path.join(args.outputfolderPath,'images/im_{}.jpg'.format(imageName_i)),ipatch)
                     if args.binaryFlag:
-                        cv2.imwrite(os.path.join(args.outputfolderPath,'binaryMap/bm_{}.jpg'.format(imageName_i)),bpatch)
+                        cv2.imwrite(os.path.join(args.outputfolderPath,'binaryImages/bm_{}.jpg'.format(imageName_i)),bpatch)
                 except Exception as exp:
                     print('Error : Saving the patch {}'.format(exp))
                     errors+=1

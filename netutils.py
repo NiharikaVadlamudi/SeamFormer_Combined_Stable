@@ -22,7 +22,7 @@ std = [0.229, 0.224, 0.225]
 
 
 def merge_images_horizontally(img1, img2, img3):
-    assert img1.shape == img2.shape==img3.shape , "Error merging the images"
+    assert img1.shape == img2.shape == img3.shape, "Error merging the images"
     # Resize images if necessary to make them the same size
     if img1.shape != img2.shape:
         img2 = cv2.resize(img2, img1.shape[:2])
@@ -82,8 +82,9 @@ def imvisualize(settings,imdeg, imgt, impred, ind, epoch=0,threshold=0.4):
         base_dir = os.path.join(settings['visualisation_folder'],'epoch_{}'.format(epoch))
         epoch=str(epoch)
         os.makedirs(base_dir,exist_ok=True)
-        out = merge_images_horizontally(imdeg[:,:,0],imgt,impred)
-        cv2.imwrite(os.path.join(base_dir,str(ind)+'_combined.png'),out)
+        imdeg_ = imdeg[:,:,0].reshape(*imdeg.shape[:-1], 1)
+        out = merge_images_horizontally(imdeg_,imgt,impred)
+        cv2.imwrite(os.path.join(base_dir,str(ind)+'_combined.jpg'),out)
 
     return imdeg,imgt,impred
 
