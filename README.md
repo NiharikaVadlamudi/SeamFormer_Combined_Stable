@@ -151,13 +151,13 @@ python datapreparation.py \
 
 #### Training Binarisation branch
 ```bash
-python train.py --exp_json_path 'BKS.json' --mode 'train' --train_binary
+python train.py --exp_json_path 'SD_exp1_Configuration.json' --mode 'train' --train_binary
 ```
 
 
 #### Training Scribble generation branch 
 ```bash
-python train.py --exp_json_path 'BKS.json' --mode 'train' --train_scribble
+python train.py --exp_json_path 'SD_exp1_Configuration.json' --mode 'train' --train_scribble
 
 ```
 
