@@ -171,7 +171,7 @@ Download Pretrained weights for binarisation from this [drive link]() and change
 ---
 
 ## Visual Results
-From top left, clockwise - Sundanese, Penn In hand, Khmer, Jain.
+From top left, clockwise - Bhoomi, Penn In hand, Khmer, Jain.
 
 ![Visual results](readme_imgs/Net_New_Drawing.svg)  
 ---
