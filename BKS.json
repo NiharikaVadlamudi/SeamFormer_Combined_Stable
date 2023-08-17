@@ -1,6 +1,5 @@
 {   
     "dataset_code":"SD",
-    "experiment_base":"scribbleGen", 
     "wid" : "Public_BKS_E3_V3",
     "data_path":"/ssd_scratch/cvit/hwaseem04/data/", 
     "model_weights_path":"/ssd_scratch/cvit/hwaseem04/data/",

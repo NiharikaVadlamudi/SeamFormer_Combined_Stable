@@ -60,8 +60,9 @@ Stage - 2: Uses binarisation and scribble output from previous stage to create c
 ---
 
 ### Usage
-- Colab file link
-
+- Access via [Colab file]() or [Python file]().
+- For Python file
+  - You can either provide json file or image folder path.
 
 ## Training
 ---
@@ -96,10 +97,9 @@ To train the model dataset should be in a folder following the hierarchy:
 
   | Parameters  | Description | Default Value
   | ----------  | ----------- | ------------- |
-  | dataset_code   | Short name for Dataset as in dataset folder   | I2 | 
-  | experiment_base   | Experiment Name  | SeamFormerV1 | 
+  | dataset_code   | Short name for Dataset   | I2 | 
   | wid   | WandB experiment Name   | I2_train | 
-  | data_path   | Dataset path   | /ICDAR2023/ | 
+  | data_path   | Dataset path   | /data/ | 
   | model_weights_path   | Path location to store trained weights  | /weights/ | 
   | visualisation_folder   | Folder path to store visualisation results | /vis_results/ | 
   | learning_rate   | Initial learning rate of optimizer (scheduler applied) | $0.005-0.0009$ | 
@@ -112,8 +112,8 @@ To train the model dataset should be in a folder following the hierarchy:
   | batch_size   | Batch size for training   | $4$ | 
   | num_epochs   | Total epochs for training   | $30$ | 
   | mode   | Flag to train or test. Either use "train"/"test"   | "train" | 
-  | train_scribble   | When set to true, trains only scribble branch   | false| 
-  | train_binary  | When set to true, trains only binary branch   | true | 
+  | train_scribble   | Enables scribble branch train  | false| 
+  | train_binary  | Enables binary branch train   | true | 
   | pretrained_weights_path   | Path location for pretrained weights(either for scribble/binarisation)   | /weights/ | 
   | enableWandb  | Enable it if you have wandB configured, else the results are stored locally in  `visualisation_folder`  | false |
 
@@ -124,11 +124,11 @@ Stage 1 comprises of a multi-task tranformer for binarisation and scribble gener
 
 
 #### Sample train/test.json file structure
-```json
+```bash
 [
-  {"imgPath": "./ICDAR2023/SD/SD_Train/imgs/palm_leaf_1.jpg",
-   "gdPolygons": [[[x1,y1],[x2,y2]],[[x3,y3],[x4,y4]]],
-   "scribbles": [[[x5,y5],[x6,y6]],[[x7,y7],[x8,y8]]]
+  {"imgPath": "./ICDARTrain/SD/SD_Train/imgs/palm_leaf_1.jpg",
+   "gdPolygons": [[[x11,y11],[x12,y12]...],[[x21,y21],[x22,y22]...], ...],
+   "scribbles": [[[x11,y11],[x12,y12]...],[[x21,y21],[x22,y22]...], ...]
   } ,
   ...
 ]
@@ -137,16 +137,16 @@ Stage 1 comprises of a multi-task tranformer for binarisation and scribble gener
 #### Data Preparation for Binarisation and Scribble Generation
 ```bash
 python datapreparation.py \
- --datafolder '/ICDAR2023/' \
- --outputfolderPath '/ICDAR2023/SD_train' \
- --inputjsonPath '/ICDAR2023/SD/SD_Train/train.json' \
- --binaryFolderPath '/ICDAR2023/SD/SD_Train/bin_imges'
+ --datafolder '/data/' \
+ --outputfolderPath '/SD_train_patches' \
+ --inputjsonPath '/data/ICDARTrain/SD/SD_Train/train.json' \
+ --binaryFolderPath '/data/ICDARTrain/SD/SD_Train/bin_imges'
 
 python datapreparation.py \
  --datafolder '/ICDAR2023/' \
- --outputfolderPath '/ICDAR2023/SD_test' \
- --inputjsonPath '/ICDAR2023/SD/SD_Test/test.json' \
- --binaryFolderPath '/ICDAR2023/SD/SD_Test/bin_imges'
+ --outputfolderPath '/SD_test_patches' \
+ --inputjsonPath '/data/ICDARTrain/SD/SD_Test/test.json' \
+ --binaryFolderPath '/data/ICDARTest/SD/SD_Test/bin_imges'
 ```
 
 #### Training Binarisation branch
@@ -165,14 +165,16 @@ python train.py --exp_json_path 'BKS.json' --mode 'train' --train_scribble
 ### Stage-2
 ---
 
-### Finetuning
+## Weights
 
 Download Pretrained weights for binarisation from this [drive link]() and change the *pretrained_weights_path* in the json files in `configs` directory accordingly.
 
 ---
 
 ## Visual Results
+From top left, clockwise - Sundanese, Penn In hand, Khmer, Jain.
 
+![Visual results](readme_imgs/Net_New_Drawing.svg)  
 ---
 ## Citation
 
@@ -180,3 +182,7 @@ Download Pretrained weights for binarisation from this [drive link]() and change
 ## Contact 
 For any suggestions/contributions to the repository , please contact : <br />
 Niharika Vadlamudi - niharika11988@gmail.com / niharika.vadlamudi@research.iiit.ac.in
+
+
+### To do:
+- rename config file
