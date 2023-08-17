@@ -93,7 +93,6 @@ To train the model dataset should be in a folder following the hierarchy:
 
 `<dataset_name>_<exp_name>_Configuration.json`
 
-- A table as in Doc-UFCN
 
   | Parameters  | Description | Default Value
   | ----------  | ----------- | ------------- |
