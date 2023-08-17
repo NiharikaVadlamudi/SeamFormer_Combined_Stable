@@ -160,16 +160,14 @@ def datasetPrepare(args):
 
             if args.binaryFlag:
                 # Either get the binary image via Sauvola-Niblack Binarisation Method
-                bMap = get_channel_binary(img)
+                bMap = get_channel_binary(img) * 255 # patches --> White text, black background
                 if args.binaryFolderPath is not None : 
-                    binImage = cv2.imread(os.path.join(args.binaryFolderPath,imgName))
+                    binImage = 255 - cv2.imread(os.path.join(args.binaryFolderPath,imgName.replace('.jpg', '_binarized.jpg')))
                     graybinImage = cv2.cvtColor(binImage ,cv2.COLOR_BGR2GRAY)
-                    graybinImage = graybinImage/255 
-                    bMap = np.asarray(graybinImage,dtype=np.int32)
+                    bMap = np.asarray(graybinImage,dtype=np.int32) 
 
                 # Go ahead and compute patches 
                 bpatches,indices = emp.extract_patches(bMap,patchsize=args.patchsize,overlap=args.overlap)
-
             N = len(spatches)
             for i in range(0,N,1):
                 count = count + 1
@@ -178,7 +176,6 @@ def datasetPrepare(args):
                 spatch=  cv2.resize(spatches[i], (args.patchsize,args.patchsize), interpolation = cv2.INTER_AREA)
                 if args.binaryFlag:
                     bpatch = cv2.resize(bpatches[i], (args.patchsize,args.patchsize), interpolation = cv2.INTER_AREA)
-                
                 # List of indices to name the patch
                 lindices = list(indices[i])
                 imageName_i = imgName.split('.')[0]+'_{}_{}_{}_{}'.format(str(lindices[0]),str(lindices[1]),str(lindices[2]),str(lindices[3]))
