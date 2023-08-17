@@ -173,6 +173,10 @@ Download Pretrained weights for binarisation from this [drive link]() and change
 
 ## Visual Results
 
+---
+## Citation
+
+---
 ## Contact 
 For any suggestions/contributions to the repository , please contact : <br />
 Niharika Vadlamudi - niharika11988@gmail.com / niharika.vadlamudi@research.iiit.ac.in
