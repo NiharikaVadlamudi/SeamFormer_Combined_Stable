@@ -31,25 +31,28 @@ pip install -r stage1_requirements.txt
 ---
 Overall Two-stage Architecture: Stage-1 generated binarised output with just text content along with a scribble map. Stage-2 uses these two intermediate outputs to generate Seams and finally the required text-line segmentation. 
 
+<div align="center">
+
 ![Overall Architecture](readme_imgs/overall.png)
+</div>
 
 <br>
 Stage - 1: Uses Encoder-Decoder based multi-task vision transformer to generate binarisation result in one branch and scribble(strike-through lines) in another branch.
 
-<center> 
+<div align="center">
 
   ![stage 1](readme_imgs/stage1.png)  
-</center>
+</div>
 
 <br>
 Stage - 2: Uses binarisation and scribble output from previous stage to create custom energy map for Seam generation. Using which final text-line segments are produced
 
 <br>
 
-<center>
+<div align="center">
 
   ![stage 2](readme_imgs/stage2.png)  
-</center>
+</div>
 
 
 
@@ -57,12 +60,7 @@ Stage - 2: Uses binarisation and scribble output from previous stage to create c
 ---
 
 ### Usage
-- Possibly a colab file?? (something like in docentr)
-- model zoo
-
-### Output
-- Intermediate results - Scribbles
-- Final output samples
+- Colab file link
 
 
 ## Training
@@ -70,8 +68,6 @@ Stage - 2: Uses binarisation and scribble output from previous stage to create c
 The SeamFormer is split into two parts:
 - Stage-1: Binarisation and Scribble Generation
 - Stage-2: Seam generation and final segmentation prediction
-
-Download Pretrained weights for binarisation from [ drive link of DocEnTr: An End-to-End Document Image Enhancement Transformer]() and change the *pretrained_weights_path* in the json files in `configs` directory accordingly.
 
 <br>
 
@@ -143,13 +139,16 @@ Stage 1 comprises of a multi-task tranformer for binarisation and scribble gener
 python datapreparation.py \
  --datafolder '/ICDAR2023/' \
  --outputfolderPath '/ICDAR2023/SD_train' \
- --inputjsonPath '/ICDAR2023/SD/SD_Train/train.json'
+ --inputjsonPath '/ICDAR2023/SD/SD_Train/train.json' \
+ --binaryFolderPath '/ICDAR2023/SD/SD_Train/bin_imges'
 
 python datapreparation.py \
  --datafolder '/ICDAR2023/' \
  --outputfolderPath '/ICDAR2023/SD_test' \
- --inputjsonPath '/ICDAR2023/SD/SD_Test/test.json'
+ --inputjsonPath '/ICDAR2023/SD/SD_Test/test.json' \
+ --binaryFolderPath '/ICDAR2023/SD/SD_Test/bin_imges'
 ```
+
 #### Training Binarisation branch
 ```bash
 python train.py --exp_json_path 'BKS.json' --mode 'train' --train_binary
@@ -162,21 +161,17 @@ python train.py --exp_json_path 'BKS.json' --mode 'train' --train_scribble
 
 ```
 
-<!-- #### WandB Setup (Optional)
-- Include in Config file. Make changes in train.py
-- Those who need wandb, make the visualization local - text file (metrics), folder(images) 
-```
-
-``` -->
-
-
 
 ### Stage-2
 ---
 
 ### Finetuning
+
+Download Pretrained weights for binarisation from this [drive link]() and change the *pretrained_weights_path* in the json files in `configs` directory accordingly.
+
 ---
 
+## Visual Results
 
 ## Contact 
 For any suggestions/contributions to the repository , please contact : <br />
