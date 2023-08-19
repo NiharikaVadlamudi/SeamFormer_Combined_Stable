@@ -8,17 +8,16 @@
 ### Dataset
 ```
 pip install gdown
-gdown 1rMmjE4wyKnObMSNXQtHhuTlvcgWCzt93
+gdown 1bYqKGPeqZ0XpFJS6d9X8rKk078ESTUHn
 mkdir data/
 mv SD.zip data/
 unzip data/SD.zip -d data/SD/ 
-rm -rf data/SD/__MACOSX 
 rm -rf data/SD.zip
 ```
 
 or 
 
-Download directly from [here](https://drive.google.com/file/d/1rMmjE4wyKnObMSNXQtHhuTlvcgWCzt93/view?usp=drive_link). Follow the below data hierarchy after unzipping it.
+Download directly from [here](https://drive.google.com/file/d/1bYqKGPeqZ0XpFJS6d9X8rKk078ESTUHn/view?usp=sharing). Follow the below data hierarchy after unzipping it.
 
 ```
 data
