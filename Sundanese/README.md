@@ -23,20 +23,14 @@ Download directly from [here](https://drive.google.com/file/d/1rMmjE4wyKnObMSNXQ
 ```
 data
 ├── SD
-│   ├── SD_TRAIN
-│   │   ├── binarise
-│   │   │   ├── imgs
-│   │   │   ├── bin_imgs
-│   │   ├── scribble
-│   │   │   ├── imgs
-│   │   │   ├── SD_TRAIN.json
-│   ├── SD_TEST
-│   │   ├── binarise
-│   │   │   ├── imgs
-│   │   │   ├── bin_imgs
-│   │   ├── scribble
-│   │   │   ├── imgs
-│   │   │   ├── SD_TEST.json
+│   ├── SD_Train
+│   │   ├── images
+│   │   ├── binaryImages
+│   │   ├── SD_TRAIN.json
+│   ├── SD_Test
+│   │   ├── images
+│   │   ├── binaryImages
+│   │   ├── SD_TEST.json
 
 ```
 
@@ -47,18 +41,18 @@ data
 - Train Data
 ```bash
 python datapreparation.py \
- --datafolder '/data/' \
- --outputfolderPath '/SD_train_patches' \
- --inputjsonPath '/data/SD/SD_TRAIN/scribble/SD_TRAIN.json' \
- --binaryFolderPath '/data/SD/SD_TRAIN/binarise/bin_imgs'
+ --datafolder '.data/' \
+ --outputfolderPath '.data/SD_train_patches' \
+ --inputjsonPath '.data/SD/SD_Train/SD_TRAIN.json' \
+ --binaryFolderPath '.data/SD/SD_Train/binaryImages'
 ```
 - Validation/Test Data
 ```bash
 python datapreparation.py \
- --datafolder '/data/' \
- --outputfolderPath '/SD_test_patches' \
- --inputjsonPath '/data/SD/SD_TEST/scribble/SD_TEST.json' \
- --binaryFolderPath 'data/SD/SD_TEST/binarise/bin_imgs'
+ --datafolder '.data/' \
+ --outputfolderPath '.data/SD_test_patches' \
+ --inputjsonPath '.data/SD/SD_Test/SD_TEST.json' \
+ --binaryFolderPath '.data/SD/SD_Test/binaryImages'
 ```
 
 ### Training Binarisation Branch

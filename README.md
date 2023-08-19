@@ -81,13 +81,13 @@ To train the model dataset should be in a folder following the hierarchy:
 ```
 ├── Dataset
 │   ├── <Dataset>_Train
-│   │   ├── imgs
-│   │   ├── bin_imgs
-│   │   ├── train.json
+│   │   ├── images
+│   │   ├── binaryImages
+│   │   ├── <Dataset>_TRAIN.json
 │   ├── <Dataset>_Test
-│   │   ├── imgs
-│   │   ├── bin_imgs
-│   │   ├── test.json
+│   │   ├── images
+│   │   ├── binaryImages
+│   │   ├── <Dataset>_TEST.json
 │
 ├── ...
 ```
@@ -147,13 +147,13 @@ Stage 1 comprises of a multi-task tranformer for binarisation and scribble gener
 ```bash
 python datapreparation.py \
  --datafolder '.data/' \
- --outputfolderPath '/<Dataset>_train_patches' \
+ --outputfolderPath '.data/<Dataset>_train_patches' \
  --inputjsonPath '.data/<Dataset>/<Dataset>_Train/train.json' \
  --binaryFolderPath '.data/<Dataset>/<Dataset>_Train/bin_imges'
 
 python datapreparation.py \
  --datafolder '.data/' \
- --outputfolderPath '/<Dataset>_test_patches' \
+ --outputfolderPath '.data/<Dataset>_test_patches' \
  --inputjsonPath '.data/<Dataset>/<Dataset>_Test/test.json' \
  --binaryFolderPath '.data/<Dataset>/<Dataset>_Test/bin_imges'
 ```
