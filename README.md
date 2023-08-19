@@ -135,7 +135,7 @@ Stage 1 comprises of a multi-task tranformer for binarisation and scribble gener
 #### Sample train/test.json file structure
 ```bash
 [
-  {"imgPath": "./ICDARTrain/SD/SD_Train/imgs/palm_leaf_1.jpg",
+  {"imgPath": ".data/<Dataset>/<Dataset>_Train/imgs/palm_leaf_1.jpg",
    "gdPolygons": [[[x11,y11],[x12,y12]...],[[x21,y21],[x22,y22]...], ...],
    "scribbles": [[[x11,y11],[x12,y12]...],[[x21,y21],[x22,y22]...], ...]
   } ,
@@ -146,27 +146,27 @@ Stage 1 comprises of a multi-task tranformer for binarisation and scribble gener
 #### Data Preparation for Binarisation and Scribble Generation
 ```bash
 python datapreparation.py \
- --datafolder '/data/' \
- --outputfolderPath '/SD_train_patches' \
- --inputjsonPath '/data/ICDARTrain/SD/SD_Train/train.json' \
- --binaryFolderPath '/data/ICDARTrain/SD/SD_Train/bin_imges'
+ --datafolder '.data/' \
+ --outputfolderPath '/<Dataset>_train_patches' \
+ --inputjsonPath '.data/<Dataset>/<Dataset>_Train/train.json' \
+ --binaryFolderPath '.data/<Dataset>/<Dataset>_Train/bin_imges'
 
 python datapreparation.py \
- --datafolder '/data/' \
- --outputfolderPath '/SD_test_patches' \
- --inputjsonPath '/data/ICDARTrain/SD/SD_Test/test.json' \
- --binaryFolderPath '/data/ICDARTest/SD/SD_Test/bin_imges'
+ --datafolder '.data/' \
+ --outputfolderPath '/<Dataset>_test_patches' \
+ --inputjsonPath '.data/<Dataset>/<Dataset>_Test/test.json' \
+ --binaryFolderPath '.data/<Dataset>/<Dataset>_Test/bin_imges'
 ```
 
 #### Training Binarisation branch
 ```bash
-python train.py --exp_json_path 'SD_exp1_Configuration.json' --mode 'train' --train_binary
+python train.py --exp_json_path '<Dataset>_exp1_Configuration.json' --mode 'train' --train_binary
 ```
 
 
 #### Training Scribble generation branch 
 ```bash
-python train.py --exp_json_path 'SD_exp1_Configuration.json' --mode 'train' --train_scribble
+python train.py --exp_json_path '<Dataset>_exp1_Configuration.json' --mode 'train' --train_scribble
 
 ```
 
