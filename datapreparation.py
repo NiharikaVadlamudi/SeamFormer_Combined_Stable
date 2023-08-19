@@ -22,7 +22,7 @@ import itertools
 import numpy as np 
 from empatches import EMPatches
 from skimage.filters import (threshold_otsu, threshold_niblack,threshold_sauvola)
-
+from netutils import generateScribble
 
 #File Import 
 sys.path.append('..') 
@@ -148,7 +148,12 @@ def datasetPrepare(args):
         lower_path = path.lower()
 
         try:
-            scribbles = [scr for scr in  datapoint['scribbles']]
+            if  'scribbles' not in datapoint:
+                H = img.shape[0]
+                W = img.shape[1]
+                scribbles = [generateScribble(H, W, polygon) for polygon in datapoint['gdPolygons'] ]
+            else:   
+                scribbles = [scr for scr in  datapoint['scribbles']]
             sMap = get_channel_scibbles(img,scribbles,thickness=THICKNESS)
             if sMap is None or img is None: 
                 print('Nothing to process..')
