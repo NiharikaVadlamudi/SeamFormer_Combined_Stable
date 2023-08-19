@@ -89,6 +89,13 @@ To train the model dataset should be in a folder following the hierarchy:
 ├── ...
 ```
 
+#### Sample Sundanese input images
+
+![Sundanese 1](readme_imgs/CB-3-18-90-7.jpg) <br><br>
+![Sundanese 2](readme_imgs/CB-3-18-90-12.jpg)
+
+
+
 ### Preparing the configuration files
 
 `<dataset_name>_<exp_name>_Configuration.json`
@@ -142,7 +149,7 @@ python datapreparation.py \
  --binaryFolderPath '/data/ICDARTrain/SD/SD_Train/bin_imges'
 
 python datapreparation.py \
- --datafolder '/ICDAR2023/' \
+ --datafolder '/data/' \
  --outputfolderPath '/SD_test_patches' \
  --inputjsonPath '/data/ICDARTrain/SD/SD_Test/test.json' \
  --binaryFolderPath '/data/ICDARTest/SD/SD_Test/bin_imges'
@@ -162,6 +169,7 @@ python train.py --exp_json_path 'SD_exp1_Configuration.json' --mode 'train' --tr
 
 
 ### Stage-2
+
 ---
 
 ## Weights
@@ -174,8 +182,32 @@ Download Pretrained weights for binarisation from this [drive link]() and change
 From top left, clockwise - Bhoomi, Penn In hand, Khmer, Jain.
 
 ![Visual results](readme_imgs/Net_New_Drawing.svg)  
+
 ---
+
+## Finetuning
+- Parameters that are to carefully configured.
+  - In `datapreparation.py`
+    - THICKNESS - This parameter defines the thickness of scribble ground truth. Reduce this as needed if the predicted scribbles are so thick so that two scribbles merge into one.
+    - OVERLAP - If you think you have fewer number of palm-leaf images, increase overlap to 0.5 or 0.75 so that you get more training patches.
+
+- Choose learning rate and a finetuning strategy (refer topic 'When and how to fine-tune' in [CS231n Notes](https://cs231n.github.io/transfer-learning/)) based on available data at hand and its closeness to pretrained data. 
+  - You can choose to unfreeze decoder(for binariser/scribble branch) alone and train decoder alone. 
+  - Or you can choose to unfreeze both decoder and encoder for binarisation, but it is preferred to always freeze encoder during scribble generation and only finetune its decoder.
+  - Freezing and unfreezing parameters can be configured in `builModel()` in `train.py` using the command `param.requires_grad = False`  appropriately
+    - By default 
+      - During Binarisation: Scribble branch's decoder is freezed
+      - During Scribble Generation: Binary branch's decoder and also the encoder is freezed.
+
+- Configuration of GPU that we used and typical training time.
+  - Single *NVIDIA GeForce GTX 1080 Ti* GPU, 12 GB of GDDR5X VRAM
+  - If you use a setup with say around 1000 train images and 0% overlap, it would take ~10 hours. Susceptible to image resolution and overlap percentage, ofcourse.
+
+- Refer sample training setup that we used for Sundanese Dataset [here](Sundanese/README.md).
+
 ## Citation
+
+---
 
 ---
 ## Contact 

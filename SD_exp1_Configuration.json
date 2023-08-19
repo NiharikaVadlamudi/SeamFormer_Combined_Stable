@@ -1,9 +1,9 @@
 {   
     "dataset_code":"SD",
-    "wid" : "Public_BKS_E3_V3",
-    "data_path":"/ssd_scratch/cvit/hwaseem04/data/", 
-    "model_weights_path":"/ssd_scratch/cvit/hwaseem04/data/",
-    "visualisation_folder":"/ssd_scratch/cvit/hwaseem04/data/",
+    "wid" : "", // Set a name if you are using Wandb
+    "data_path":"data/", 
+    "model_weights_path":"data/",
+    "visualisation_folder":"viz_output/",
     "learning_rate":0.0008,
     "weight_logging_interval":3,
     "imgsize":256,
@@ -11,11 +11,34 @@
     "encoder_layers":6,
     "encoder_heads":8,
     "encoder_dims":768,
-    "batch_size":4,
+    "batch_size":8,
     "num_epochs":1,
     "mode":"train",
     "train_scribble":true,
     "train_binary":false,
-    "pretrained_weights_path": "/ssd_scratch/cvit/hwaseem04/BKS_scr.pt",
-    "enabledWandb":false
+    "pretrained_weights_path": "",
+    "enabledWandb":false // Set as `true` if you are using Wandb
 }
+
+
+// {   
+//     "dataset_code":"SD",
+//     "wid" : "Public_BKS_E3_V3",
+//     "data_path":"/ssd_scratch/cvit/hwaseem04/data/", 
+//     "model_weights_path":"/ssd_scratch/cvit/hwaseem04/data/",
+//     "visualisation_folder":"/ssd_scratch/cvit/hwaseem04/data/",
+//     "learning_rate":0.0008,
+//     "weight_logging_interval":3,
+//     "imgsize":256,
+//     "patchsize":8,
+//     "encoder_layers":6,
+//     "encoder_heads":8,
+//     "encoder_dims":768,
+//     "batch_size":4,
+//     "num_epochs":1,
+//     "mode":"train",
+//     "train_scribble":true,
+//     "train_binary":false,
+//     "pretrained_weights_path": "/ssd_scratch/cvit/hwaseem04/BKS_scr.pt",
+//     "enabledWandb":false
+// }
