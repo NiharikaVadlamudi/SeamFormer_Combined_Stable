@@ -14,7 +14,10 @@ This repository is a one-click setup, where the pipeline automatically captures 
     - [Preparing Configs](#Preparing-the-configuration-files)
     - [Stage-1](#stage-1)
     - [Stage-2](#stage-2)
+5. [Pretrained Weights](#pretrained-weights) 
+5. [Visual Results](#visual-results) 
 5. [Finetuning](#finetuning) 
+6. [Citation](#citation)
 6. [Contact](#contact)
 
 ## Getting Started
@@ -172,7 +175,7 @@ python train.py --exp_json_path 'SD_exp1_Configuration.json' --mode 'train' --tr
 
 ---
 
-## Weights
+## Pretrained Weights
 
 Download Pretrained weights for binarisation from this [drive link]() and change the *pretrained_weights_path* in the json files in `configs` directory accordingly.
 
